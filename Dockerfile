@@ -24,26 +24,26 @@ ENV RMW_IMPLEMENTATION="rmw_cyclonedds_cpp"
 RUN echo 'Etc/UTC' > /etc/timezone  \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime \
   && apt-get update && apt-get install -q -y --no-install-recommends \
-    bash-completion \
-    black \
-    build-essential \
-    curl \
-    dirmngr \
-    emacs \
-    git \
-    gnupg2 \
-    iproute2 \
-    net-tools \
-    ssh \
-    python-is-python3 \
-    python3-pip \
-    software-properties-common \
-    sudo \
-    tzdata \
-    usbutils \
-    wget \
-    x11-apps \
-    xauth \
+         bash-completion \
+         black \
+         build-essential \
+         curl \
+         dirmngr \
+         emacs \
+         git \
+         gnupg2 \
+         iproute2 \
+         net-tools \
+         ssh \
+         python-is-python3 \
+         python3-pip \
+         software-properties-common \
+         sudo \
+         tzdata \
+         usbutils \
+         wget \
+         x11-apps \
+         xauth \
   && add-apt-repository universe \
   && rm -rf /var/lib/apt/lists/*
 
@@ -51,36 +51,36 @@ RUN echo 'Etc/UTC' > /etc/timezone  \
 ################################################################################
 # setup ros package overlay & install ros packages
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
-    -o /usr/share/keyrings/ros-archive-keyring.gpg \
+         -o /usr/share/keyrings/ros-archive-keyring.gpg \
   && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
-    http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
-    | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null \
+           http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
+       | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null \
   && apt-get update && apt-get install -q -y --no-install-recommends \
-    python3-colcon-common-extensions \
-    python3-colcon-mixin \
-    python3-debugpy \
-    python3-rosdep \
-    python3-vcstool \
-    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
-    ros-${ROS_DISTRO}-rmw-fastrtps-cpp \
-    ros-${ROS_DISTRO}-desktop \
-    ros-${ROS_DISTRO}-joint-state-publisher \
-    ros-${ROS_DISTRO}-joint-state-publisher-gui \
-    ros-${ROS_DISTRO}-xacro \
-    ros-${ROS_DISTRO}-ros-gz \
-    ros-${ROS_DISTRO}-ros2-control \
-    ros-${ROS_DISTRO}-ros2-controllers \
+         python3-colcon-common-extensions \
+         python3-colcon-mixin \
+         python3-debugpy \
+         python3-rosdep \
+         python3-vcstool \
+         ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
+         ros-${ROS_DISTRO}-rmw-fastrtps-cpp \
+         ros-${ROS_DISTRO}-desktop \
+         ros-${ROS_DISTRO}-joint-state-publisher \
+         ros-${ROS_DISTRO}-joint-state-publisher-gui \
+         ros-${ROS_DISTRO}-xacro \
+         ros-${ROS_DISTRO}-ros-gz \
+         ros-${ROS_DISTRO}-ros2-control \
+         ros-${ROS_DISTRO}-ros2-controllers \
   && rm -rf /var/lib/apt/lists/*
 
 
 ################################################################################
 # setup colcon mixin and metadata
-RUN colcon mixin add default \
-    https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml && \
-  colcon mixin update default && \
-  colcon metadata add default \
-    https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
-  colcon metadata update
+RUN  colcon mixin add default \
+       https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml \
+  && colcon mixin update default \
+  && colcon metadata add default \
+       https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml \
+  && colcon metadata update
 
 
 ################################################################################
@@ -94,6 +94,7 @@ RUN git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git \
 ################################################################################
 ## Build and Install plotjuggler, from source
 ##
+## Install required packages:
 RUN  apt update \
   && apt install -y -q \
                  binutils-dev \
@@ -123,21 +124,23 @@ RUN  apt update \
                  ros-${ROS_DISTRO}-rclcpp-components \
                  ros-${ROS_DISTRO}-rosidl-default-generators \
                  ros-${ROS_DISTRO}-rosidl-default-runtime \
-     && apt-get autoremove -y \
-     && apt-get clean  \
-     && rm -rf /var/lib/apt/lists/*  \
-     && mkdir -p /opt/plotjuggler/src  \
-     && cd /opt/plotjuggler/src  \
-     && git clone https://github.com/PlotJuggler/plotjuggler_msgs.git  \
-     && git clone https://github.com/facontidavide/PlotJuggler.git  \
-     && git clone https://github.com/PlotJuggler/plotjuggler-ros-plugins.git  \
-     && cd /opt/plotjuggler  \
-     && . /opt/ros/${ROS_DISTRO}/setup.sh  \
-     && export AMENT_PREFIX_PATH=/opt/ros/${ROS_DISTRO}  \
-     && export CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} \
-     && export ROS_VERSION=2  \
-     && export ROS_PYTHON_VERSION=3  \
-     && colcon build \
+  && apt-get autoremove -y \
+  && apt-get clean  \
+  && rm -rf /var/lib/apt/lists/*
+
+  ## Build PlotJuggler, from source:
+RUN  mkdir -p /opt/plotjuggler/src  \
+  && cd /opt/plotjuggler/src  \
+  && git clone https://github.com/PlotJuggler/plotjuggler_msgs.git  \
+  && git clone https://github.com/facontidavide/PlotJuggler.git  \
+  && git clone https://github.com/PlotJuggler/plotjuggler-ros-plugins.git  \
+  && cd /opt/plotjuggler  \
+  && . /opt/ros/${ROS_DISTRO}/setup.sh  \
+  && export AMENT_PREFIX_PATH=/opt/ros/${ROS_DISTRO}  \
+  && export CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} \
+  && export ROS_VERSION=2  \
+  && export ROS_PYTHON_VERSION=3  \
+  && colcon build \
             --cmake-args \
             -DCMAKE_BUILD_TYPE=RelWithDebInfo \
             -DROS_DISTRO=${ROS_DISTRO} \
